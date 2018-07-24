@@ -1,5 +1,8 @@
 # Tendermint
 
+A customized blockchain consensus protocol is base on this project and the core idea is based on PBFT.
+
+
 [Byzantine-Fault Tolerant](https://en.wikipedia.org/wiki/Byzantine_fault_tolerance)
 [State Machine Replication](https://en.wikipedia.org/wiki/State_machine_replication).
 Or [Blockchain](https://en.wikipedia.org/wiki/Blockchain_(database)) for short.

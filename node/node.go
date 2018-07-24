@@ -466,6 +466,7 @@ func (n *Node) OnStart() error {
 		n.prometheusSrv = n.startPrometheusServer(n.config.Instrumentation.PrometheusListenAddr)
 	}
 
+	n.ListenNewBlocks()
 	// Start the switch (the P2P server).
 	err = n.sw.Start()
 	if err != nil {
@@ -602,6 +603,61 @@ func (n *Node) startRPC() ([]net.Listener, error) {
 
 	return listeners, nil
 }
+
+type Local struct {
+	*types.EventBus
+}
+
+
+//listen to the block ready event
+func (n *Node) ListenNewBlocks(){
+	go func() {
+
+		evtTyp := types.EventNewBlock
+		///	blockEvent, ok := evt.(types.EventDataNewBlock)
+
+		const subscriber = "NodeMonitor"
+		//ctx, cancel := context.WithTimeout(context.Background(), 0)
+		ctx := context.Background()
+		evts := make(chan interface{}, 1)
+		myself := Local{
+			EventBus: n.EventBus(),
+		}
+
+		// register for the next event of this type
+		query := types.QueryForEvent(evtTyp)
+		err := myself.Subscribe(ctx, subscriber, query, evts)
+		if err != nil {
+			n.Logger.Error("failed to subscribe")
+			return
+		}
+
+		// make sure to unregister after the test is over
+		defer myself.UnsubscribeAll(ctx, subscriber)
+
+		for {
+			select {
+			case evt := <-evts:
+				//return evt.(types.TMEventData), nil
+				blockEvent, _ := evt.(types.EventDataNewBlock)
+				block := blockEvent.Block
+				fmt.Println("---------------------------------------------------------")
+				fmt.Println(block.LastCommit.BlockID)
+				fmt.Println("---------------------------------------------------------")
+			case <-ctx.Done():
+				n.Logger.Error("time out waiting for the event")
+			}
+		}
+
+
+
+		if err != nil {
+			fmt.Println(err)
+		}
+
+	}()
+}
+
 
 // startPrometheusServer starts a Prometheus HTTP server, listening for metrics
 // collectors on addr.

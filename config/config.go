@@ -284,6 +284,7 @@ type P2PConfig struct {
 	Seeds string `mapstructure:"seeds"`
 
 	// Comma separated list of nodes to keep persistent connections to
+	// Do not add private peers to this list if you don't want them advertised
 	PersistentPeers string `mapstructure:"persistent_peers"`
 
 	// UPNP port forwarding
@@ -348,9 +349,9 @@ func DefaultP2PConfig() *P2PConfig {
 		AddrBookStrict:          true,
 		MaxNumPeers:             50,
 		FlushThrottleTimeout:    100,
-		MaxPacketMsgPayloadSize: 1024,    // 1 kB
-		SendRate:                5120000, // 5 mB/s
-		RecvRate:                5120000, // 5 mB/s
+		MaxPacketMsgPayloadSize: 1024,   // 1 kB
+		SendRate:                512000, // 500 kB/s
+		RecvRate:                512000, // 500 kB/s
 		PexReactor:              true,
 		SeedMode:                false,
 		AllowDuplicateIP:        true, // so non-breaking yet
@@ -477,7 +478,7 @@ func DefaultConsensusConfig() *ConsensusConfig {
 		TimeoutPrecommitDelta:       500,
 		TimeoutCommit:               1000,
 		SkipTimeoutCommit:           false,
-		CreateEmptyBlocks:           true,
+		CreateEmptyBlocks:           false,
 		CreateEmptyBlocksInterval:   0,
 		PeerGossipSleepDuration:     100,
 		PeerQueryMaj23SleepDuration: 2000,
