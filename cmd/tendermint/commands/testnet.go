@@ -22,6 +22,7 @@ var (
 	nNonValidators int
 	outputDir      string
 	nodeDirPrefix  string
+	nCopyNode      int
 
 	populatePersistentPeers bool
 	hostnamePrefix          string
@@ -38,6 +39,7 @@ func init() {
 		"Number of validators to initialize the testnet with")
 	TestnetFilesCmd.Flags().IntVar(&nNonValidators, "n", 0,
 		"Number of non-validators to initialize the testnet with")
+	TestnetFilesCmd.Flags().IntVar(&nCopyNode, "c", 1, "The number of the copy node")
 	TestnetFilesCmd.Flags().StringVar(&outputDir, "o", "./mytestnet",
 		"Directory to store initialization data for the testnet")
 	TestnetFilesCmd.Flags().StringVar(&nodeDirPrefix, "node-dir-prefix", "node",
@@ -133,6 +135,15 @@ func testnetFiles(cmd *cobra.Command, args []string) error {
 			return err
 		}
 	}
+
+	for i:=0; i< nCopyNode; i++{
+		config.CommitteeMember = false
+		nodeDir := filepath.Join(outputDir, cmn.Fmt("%s%d", nodeDirPrefix, i))
+		configurefilepath := filepath.Join(nodeDir, "config", "config.toml")
+		cfg.WriteConfigFile(configurefilepath, config)
+		fmt.Println("dddddd")
+	}
+
 
 	fmt.Printf("Successfully initialized %v node directories\n", nValidators+nNonValidators)
 	return nil

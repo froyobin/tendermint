@@ -19,6 +19,7 @@ func AddNodeFlags(cmd *cobra.Command) {
 
 	// node flags
 	cmd.Flags().Bool("fast_sync", config.FastSync, "Fast blockchain syncing")
+	cmd.Flags().Bool("CommitteeMember", config.CommitteeMember, "Whether this node a committee member")
 
 	// abci flags
 	cmd.Flags().String("proxy_app", config.ProxyApp, "Proxy app address, or 'nilapp' or 'kvstore' for local testing.")

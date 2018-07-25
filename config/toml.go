@@ -50,11 +50,9 @@ func writeDefaultConfigFile(configFilePath string) {
 // WriteConfigFile renders config using the template and writes it to configFilePath.
 func WriteConfigFile(configFilePath string, config *Config) {
 	var buffer bytes.Buffer
-
 	if err := configTemplate.Execute(&buffer, config); err != nil {
 		panic(err)
 	}
-
 	cmn.MustWriteFile(configFilePath, buffer.Bytes(), 0644)
 }
 
@@ -76,6 +74,9 @@ moniker = "{{ .BaseConfig.Moniker }}"
 # allows them to catchup quickly by downloading blocks in parallel
 # and verifying their commits
 fast_sync = {{ .BaseConfig.FastSync }}
+
+# This is pre-define committeemember 
+CommitteeMember = {{.BaseConfig.CommitteeMember}}
 
 # Database backend: leveldb | memdb
 db_backend = "{{ .BaseConfig.DBBackend }}"

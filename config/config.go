@@ -145,6 +145,10 @@ type BaseConfig struct {
 
 	// Database directory
 	DBPath string `mapstructure:"db_dir"`
+
+	// Whether is node is just a member, it is just for static member settings,
+	// for reality the system will determine the committee member dynamically.
+	CommitteeMember bool `mapstructure:"CommitteeMember"`
 }
 
 // DefaultBaseConfig returns a default base configuration for a Tendermint node
@@ -162,6 +166,7 @@ func DefaultBaseConfig() BaseConfig {
 		FilterPeers:       false,
 		DBBackend:         "leveldb",
 		DBPath:            "data",
+		CommitteeMember:   true,
 	}
 }
 
