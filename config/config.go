@@ -449,7 +449,7 @@ type ConsensusConfig struct {
 	RootDir string `mapstructure:"home"`
 	WalPath string `mapstructure:"wal_file"`
 	walFile string // overrides WalPath if set
-
+	Committeemember bool `mapstructure:"CommitteeMember"`
 	// All timeouts are in milliseconds
 	TimeoutPropose        int `mapstructure:"timeout_propose"`
 	TimeoutProposeDelta   int `mapstructure:"timeout_propose_delta"`

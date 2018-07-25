@@ -833,6 +833,11 @@ func (cs *ConsensusState) enterPropose(height int64, round int) {
 	}
 	logger.Debug("This node is a validator")
 
+	if cs.config.Committeemember == false{
+		logger.Info("enterProcess: We are not the committee member.")
+		return
+	}
+
 	if cs.isProposer() {
 		logger.Info("enterPropose: Our turn to propose", "proposer", cs.Validators.GetProposer().Address, "privValidator", cs.privValidator)
 		cs.decideProposal(height, round)

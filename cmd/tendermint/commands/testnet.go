@@ -141,7 +141,6 @@ func testnetFiles(cmd *cobra.Command, args []string) error {
 		nodeDir := filepath.Join(outputDir, cmn.Fmt("%s%d", nodeDirPrefix, i))
 		configurefilepath := filepath.Join(nodeDir, "config", "config.toml")
 		cfg.WriteConfigFile(configurefilepath, config)
-		fmt.Println("dddddd")
 	}
 
 

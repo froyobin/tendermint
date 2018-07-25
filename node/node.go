@@ -279,6 +279,7 @@ func NewNode(config *cfg.Config,
 	bcReactor.SetLogger(logger.With("module", "blockchain"))
 
 	// Make ConsensusReactor
+	config.Consensus.Committeemember = config.CommitteeMember
 	consensusState := cs.NewConsensusState(
 		config.Consensus,
 		state.Copy(),
