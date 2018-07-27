@@ -256,6 +256,12 @@ func (cs *ConsensusState) LoadCommit(height int64) *types.Commit {
 // OnStart implements cmn.Service.
 // It loads the latest state via the WAL, and starts the timeout and receive routines.
 func (cs *ConsensusState) OnStart() error {
+
+	//if cs.config.Committeemember == false{
+	//	fmt.Println("1111111111111111eeee11121111")
+	//	return nil
+	//}
+
 	if err := cs.evsw.Start(); err != nil {
 		return err
 	}
@@ -414,6 +420,14 @@ func (cs *ConsensusState) updateRoundStep(round int, step cstypes.RoundStepType)
 // enterNewRound(height, 0) at cs.StartTime.
 func (cs *ConsensusState) scheduleRound0(rs *cstypes.RoundState) {
 	//cs.Logger.Info("scheduleRound0", "now", time.Now(), "startTime", cs.StartTime)
+	fmt.Println("2222222222222")
+	abc := cs.Validators.Validators
+	fmt.Println(len(abc))
+	if cs.config.Committeemember == false{
+		fmt.Println("111111111111111111121111")
+		return
+	}
+
 	sleepDuration := rs.StartTime.Sub(time.Now()) // nolint: gotype, gosimple
 	cs.scheduleTimeout(sleepDuration, rs.Height, 0, cstypes.RoundStepNewHeight)
 }
@@ -553,6 +567,12 @@ func (cs *ConsensusState) newStep() {
 // Updates (state transitions) happen on timeouts, complete proposals, and 2/3 majorities.
 // ConsensusState must be locked before any internal state is updated.
 func (cs *ConsensusState) receiveRoutine(maxSteps int) {
+
+	if cs.config.Committeemember == false{
+		fmt.Println("11111111111111111111113331")
+		return
+	}
+
 	defer func() {
 		if r := recover(); r != nil {
 			cs.Logger.Error("CONSENSUS FAILURE!!!", "err", r, "stack", string(debug.Stack()))
@@ -607,7 +627,10 @@ func (cs *ConsensusState) receiveRoutine(maxSteps int) {
 func (cs *ConsensusState) handleMsg(mi msgInfo) {
 	cs.mtx.Lock()
 	defer cs.mtx.Unlock()
-
+	if cs.config.Committeemember == false{
+		fmt.Println("11111111111111111111111")
+		return
+	}
 	var err error
 	msg, peerID := mi.Msg, mi.PeerID
 	switch msg := msg.(type) {
@@ -660,7 +683,10 @@ func (cs *ConsensusState) handleTimeout(ti timeoutInfo, rs cstypes.RoundState) {
 	// the timeout will now cause a state transition
 	cs.mtx.Lock()
 	defer cs.mtx.Unlock()
-
+	if cs.config.Committeemember == false{
+		fmt.Println("ooooooooooooooooooo")
+		return
+	}
 	switch ti.Step {
 	case cstypes.RoundStepNewHeight:
 		// NewRound event fired from enterNewRound.
@@ -826,6 +852,10 @@ func (cs *ConsensusState) enterPropose(height int64, round int) {
 		return
 	}
 
+	fmt.Println("bbbbbbbbb")
+	ddd :=len(cs.Validators.Validators)
+	fmt.Println(ddd)
+
 	// if not a validator, we're done
 	if !cs.Validators.HasAddress(cs.privValidator.GetAddress()) {
 		logger.Debug("This node is not a validator", "addr", cs.privValidator.GetAddress(), "vals", cs.Validators)
@@ -851,6 +881,11 @@ func (cs *ConsensusState) isProposer() bool {
 }
 
 func (cs *ConsensusState) defaultDecideProposal(height int64, round int) {
+
+	if cs.config.Committeemember == false{
+		return
+	}
+
 	var block *types.Block
 	var blockParts *types.PartSet
 
@@ -972,6 +1007,11 @@ func (cs *ConsensusState) enterPrevote(height int64, round int) {
 }
 
 func (cs *ConsensusState) defaultDoPrevote(height int64, round int) {
+
+	if cs.config.Committeemember == false{
+		return
+	}
+
 	logger := cs.Logger.With("height", height, "round", round)
 	// If a block is locked, prevote that.
 	if cs.LockedBlock != nil {
@@ -1362,6 +1402,9 @@ func (cs *ConsensusState) recordMetrics(height int64, block *types.Block) {
 //-----------------------------------------------------------------------------
 
 func (cs *ConsensusState) defaultSetProposal(proposal *types.Proposal) error {
+	if cs.config.Committeemember == false{
+		return nil
+	}
 	// Already have one
 	// TODO: possibly catch double proposals
 	if cs.Proposal != nil {

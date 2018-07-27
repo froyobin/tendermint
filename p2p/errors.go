@@ -12,6 +12,7 @@ type ErrSwitchDuplicatePeerID struct {
 }
 
 func (e ErrSwitchDuplicatePeerID) Error() string {
+	return ""
 	return fmt.Sprintf("Duplicate peer ID %v", e.ID)
 }
 

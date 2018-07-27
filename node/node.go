@@ -175,6 +175,14 @@ func NewNode(config *cfg.Config,
 	if err != nil {
 		return nil, err
 	}
+	state.Validators.Remove(state.Validators.Validators[1].Address)
+	state.Validators.Remove(state.Validators.Validators[0].Address)
+
+	fmt.Println("aaaaaaaaaaaaa")
+	fmt.Println(len(state.Validators.Validators))
+
+	sm.SaveState(stateDB, state)
+
 
 	// Create the proxyApp, which manages connections (consensus, mempool, query)
 	// and sync tendermint and the app by performing a handshake
@@ -467,6 +475,7 @@ func (n *Node) OnStart() error {
 		n.prometheusSrv = n.startPrometheusServer(n.config.Instrumentation.PrometheusListenAddr)
 	}
 
+	//yubin
 	n.ListenNewBlocks()
 	// Start the switch (the P2P server).
 	err = n.sw.Start()
